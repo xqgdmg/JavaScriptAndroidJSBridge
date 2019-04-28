@@ -49,9 +49,8 @@ public class JavaScriptMethods {
 
 
             final JSONObject backJson = new JSONObject();
-            backJson.put("name", "安卓getHotelData()");
-            backJson.put("price", "888.88");
-            backJson.put("address", "深圳市罗湖区富基大厦13楼");
+            backJson.put("name", "安卓getHotelData()被js调用了");
+            backJson.put("酒店地址", "深圳市罗湖区富基大厦13楼");
 
             //android调用js，必须在主线程
             invokeJavaSctiptMethod(callback, backJson.toString());

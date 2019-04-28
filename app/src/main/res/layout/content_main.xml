@@ -1,7 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cWX708605.javascriptandroid.view.BridgeWebView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/webView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/activity_main" />
+    tools:showIn="@layout/activity_main"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_marginTop="7dp"
+        android:gravity="center"
+        android:padding="7dp"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        android:text="Android调用Js方法"
+        android:background="#5500ff00"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:id="@+id/tvCallback"
+        android:layout_marginTop="7dp"
+        android:gravity="center"
+        android:padding="7dp"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        android:text="Android调用Js方法callback"
+        android:background="#550000ff"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <com.cWX708605.javascriptandroid.view.BridgeWebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </com.cWX708605.javascriptandroid.view.BridgeWebView>
+
+</LinearLayout>

@@ -3,10 +3,14 @@ package com.cWX708605.javascriptandroid;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +20,8 @@ import com.cWX708605.javascriptandroid.web.JavaScriptMethods;
 public class HotelDetailActivity extends Activity {
 
     private WebView mWebView;
+    private TextView mTextView;
+    private TextView tvCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +59,7 @@ public class HotelDetailActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                try {
-                    JSONObject json = new JSONObject();
-                    json.put("HotelDetailActivity", "深圳市");
-                    json.put("HotelDetailActivity", "富基大厦");
-                    mWebView.loadUrl("javascript:showMessage("+json.toString()+")");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Toast.makeText(HotelDetailActivity.this,"onPageFinished",Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -72,5 +71,36 @@ public class HotelDetailActivity extends Activity {
 
     private void initView() {
         mWebView = (WebView) findViewById(R.id.webView);
+        mTextView = (TextView) findViewById(R.id.tv);
+        tvCallback = (TextView) findViewById(R.id.tvCallback);
+
+        mTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("call", "Android调用Js方法");
+                    json.put("city", "深圳市1");
+                    mWebView.loadUrl("javascript:showMessage("+json.toString()+")");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        tvCallback.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("call", "Android调用Js方法callback");
+                    json.put("city", "深圳市2");
+                    mWebView.loadUrl("javascript:showMessage("+json.toString()+")");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 }
