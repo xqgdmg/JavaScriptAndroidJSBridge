@@ -8,14 +8,17 @@
 
     var messagingIframe;
     var bizMessagingIframe;
+
     var sendMessageQueue = [];/*发送消息队列*/
     var receiveMessageQueue = [];/*接受消息队列*/
+
     var messageHandlers = {};/*{}会比new Object()快，是一个数组*/
 
     var CUSTOM_PROTOCOL_SCHEME = 'yy';
     var QUEUE_HAS_MESSAGE = '__QUEUE_MESSAGE__/';/*消息队列有消息*/
 
     var responseCallbacks = {};/*定义了一个 Object，是一个数组*/
+
     var uniqueId = 1;
 
     // 创建消息index队列iframe，创建好的一个隐藏iframe来触发scheme
