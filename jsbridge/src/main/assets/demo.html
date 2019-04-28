@@ -1,0 +1,111 @@
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>
+        js调用java
+    </title>
+</head>
+
+<body>
+<p>
+    <xmp id="show">
+    </xmp>
+</p>
+<p>
+    <xmp id="init">
+    </xmp>
+</p>
+<p>
+    <input type="button" id="enter" value="发消息给Native" onclick="testClick();"
+    />
+</p>
+<p>
+    <input type="button" id="enter1" value="调用Native方法" onclick="testClick1();"
+    />
+</p>
+</body>
+<script>
+
+        function testClick() {
+
+            //send message to native，通过 send()，只是少了一个参数 handlerName
+            var data = {id: 1, content: "这是一个图片 <img src=\"a.png\"/> test\r\nhahaha"};
+            window.WebViewJavascriptBridge.send(
+                data
+                , function(responseData) {
+                    document.getElementById("show").innerHTML = "repsonseData from android, data = " + responseData
+                }
+            );
+
+        }
+
+        function testClick1() {
+
+            //call native method，通过 callHandler()，只是多了一个参数 handlerName
+            window.WebViewJavascriptBridge.callHandler(
+                'submitFromWeb'
+                , {'param': 'js调用Android的方法，传递的参数'}
+                , function(responseData) {
+                    document.getElementById("show").innerHTML = "调用Native方法: Android 返回的 data=" + responseData
+                }
+            );
+        }
+
+        function bridgeLog(logContent) {
+            document.getElementById("show").innerHTML = logContent;
+        }
+
+        function connectWebViewJavascriptBridge(callback) {
+        /*该对象名为"WebViewJavascriptBridge",是H5页面中全局对象window的一个属性，有如下方法：1.registerHandler( String,Function )
+        2.callHandler 3._handleMessageFromNative */
+            if (window.WebViewJavascriptBridge) {
+                console.log('WebViewJavascriptBridge已经存在', message);
+                callback(WebViewJavascriptBridge)
+            } else {
+            /* WebViewJavascriptBridgeReady 表示事件，function 表示的是动作，最后一个是事件是否在捕获或冒泡阶段执行。*/
+                document.addEventListener(
+                    'WebViewJavascriptBridgeReady'
+                    , function() {
+                        callback(WebViewJavascriptBridge)
+                    },
+                    false
+                );
+                console.log('WebViewJavascriptBridge不存在', message);
+            }
+        }
+
+        connectWebViewJavascriptBridge(function(bridge) {
+            bridge.init(function(message, responseCallback) {
+                console.log('JS connectWebViewJavascriptBridge got a message', message);
+                var data = {
+                    'Javascript Responds': '测试中文!!!'
+                };
+
+                if (responseCallback) {
+                    console.log('JS responding with', data);
+                    responseCallback(data);
+                }
+            });
+
+            /*
+            registerHandler( String,Function )H5调用 注册本地JS方法,注册后Native可通过JSBridge调用。
+            调用后会将方法（"functionInJs"）注册到本地变量messageHandlers 中。
+            只会通过 webView.callHandler("functionInJs",data,callback)调用。
+            */
+            bridge.registerHandler("functionInJs", function(data, responseCallback) {/*这里的responseCallback就是 CallBackFunction的 onCallBack方法*/
+                document.getElementById("show").innerHTML = ("安卓调用js之后传递过来的信息==" + data);
+                if (responseCallback) {
+                    var responseData = "js注册的handler的callback返回的回调数据";
+                    /*
+                    这个方法是怎么执行的？
+                    */
+                    responseCallback(responseData);
+                }
+            });
+        })
+
+
+</script>
+
+</html>
+
