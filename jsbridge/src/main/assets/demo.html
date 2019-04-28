@@ -28,12 +28,12 @@
 
         function testClick() {
 
-            //send message to native，通过 send()，只是少了一个参数 handlerName
-            var data = {id: 1, content: "这是一个图片 <img src=\"a.png\"/> test\r\nhahaha"};
+            /*send message to native，通过 send()，只是少了一个参数 handlerName，js实际上是让android给自己发了个消息*/
+            var data = {id: 1, content: "这是js的testClick方法"};
             window.WebViewJavascriptBridge.send(
                 data
                 , function(responseData) {
-                    document.getElementById("show").innerHTML = "repsonseData from android, data = " + responseData
+                    document.getElementById("show").innerHTML = "" + responseData
                 }
             );
 
@@ -41,7 +41,7 @@
 
         function testClick1() {
 
-            //call native method，通过 callHandler()，只是多了一个参数 handlerName
+            /*call native method，通过 callHandler()，只是多了一个参数 handlerName*/
             window.WebViewJavascriptBridge.callHandler(
                 'submitFromWeb'
                 , {'param': 'js调用Android的方法，传递的参数'}
@@ -56,10 +56,8 @@
         }
 
         function connectWebViewJavascriptBridge(callback) {
-        /*该对象名为"WebViewJavascriptBridge",是H5页面中全局对象window的一个属性，有如下方法：1.registerHandler( String,Function )
-        2.callHandler 3._handleMessageFromNative */
+        /*该对象名为"WebViewJavascriptBridge",是H5页面中全局对象window的一个属性，有如下方法：1.registerHandler( String,Function ) 2.callHandler 3._handleMessageFromNative */
             if (window.WebViewJavascriptBridge) {
-                console.log('WebViewJavascriptBridge已经存在', message);
                 callback(WebViewJavascriptBridge)
             } else {
             /* WebViewJavascriptBridgeReady 表示事件，function 表示的是动作，最后一个是事件是否在捕获或冒泡阶段执行。*/
@@ -70,11 +68,11 @@
                     },
                     false
                 );
-                console.log('WebViewJavascriptBridge不存在', message);
             }
         }
 
         connectWebViewJavascriptBridge(function(bridge) {
+        /*注册messageHandler，function(message, responseCallback) {}是一个messageHandler，他里面有message和callback*/
             bridge.init(function(message, responseCallback) {
                 console.log('JS connectWebViewJavascriptBridge got a message', message);
                 var data = {
@@ -96,9 +94,6 @@
                 document.getElementById("show").innerHTML = ("安卓调用js之后传递过来的信息==" + data);
                 if (responseCallback) {
                     var responseData = "js注册的handler的callback返回的回调数据";
-                    /*
-                    这个方法是怎么执行的？
-                    */
                     responseCallback(responseData);
                 }
             });

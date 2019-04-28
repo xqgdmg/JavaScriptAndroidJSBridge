@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <!-- button 演示Java调用web -->
+
+    <!-- button 演示Android调用web -->
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonCallHandler"
         android:layout_width="match_parent"
-        android:text="Android调用Web"
+        android:text="Android调用Web(callHandler)"
         android:textAllCaps="false"
         android:layout_height="48dp"/>
 

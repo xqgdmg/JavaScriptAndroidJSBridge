@@ -96,16 +96,16 @@
             var message = JSON.parse(messageJSON);
             var responseCallback;
             //java call finished, now need to call js callback function
-            if (message.responseId) {/*根据CallHandler调用过程中Message的创建代码，其responseId为null*/
+            if (message.responseId) {/*根据CallHandler调用过程中Message的创建代码，其responseId为null，也就是android调用js的时候是没有responseId的*/
                 responseCallback = responseCallbacks[message.responseId];
                 if (!responseCallback) {
                     return;
                 }
                 responseCallback(message.responseData);
                 delete responseCallbacks[message.responseId];/*删除已处理*/
-            } else {/*需要回调*/
+            } else {
                 //直接发送
-                if (message.callbackId) {
+                if (message.callbackId) {/*处理callback*/
                     var callbackResponseId = message.callbackId;
                     responseCallback = function(responseData) {
                         _doSend({
@@ -117,12 +117,13 @@
 
                 /* 获取默认handler。若message设置了handlerName，则在messageHandlers中依据名字获取 */
                 var handler = WebViewJavascriptBridge._messageHandler;
+                /*查找指定handler*/
                 if (message.handlerName) {
                     handler = messageHandlers[message.handlerName];
                 }
-                //查找指定handler
+
                 try {
-                    /**/
+                    /*handler处理消息*/
                     handler(message.data, responseCallback);
                 } catch (exception) {
                     if (typeof console != 'undefined') {
@@ -133,7 +134,7 @@
         });
     }
 
-    //提供给native调用,receiveMessageQueue 在会在页面加载完后赋值为null,所以
+    //提供给native调用,receiveMessageQueue 在会在页面加载完后赋值为null,所以这个json消息会添加到 receiveMessageQueue
     function _handleMessageFromNative(messageJSON) {
         console.log(messageJSON);
         if (receiveMessageQueue) {

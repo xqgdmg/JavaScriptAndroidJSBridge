@@ -98,10 +98,10 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     /*
      * webView 给 js 发送消息
      */
-    @Override
-    public void send(String data) {
-        send(data, null);
-    }
+//    @Override
+//    public void send(String data) {
+//        send(data, null);
+//    }
 
     /*
      * webView 给 js 发送消息，带callBack
@@ -112,31 +112,32 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     }
 
     /**
-     * 保存message到消息队列
+     * 封装message
      *
      * @param handlerName      handlerName
      * @param data             data
      * @param responseCallback CallBackFunction
      */
     private void doSend(String handlerName, String data, CallBackFunction responseCallback) {
-        Message m = new Message();
+        Message message = new Message();
         // Message存data
         if (!TextUtils.isEmpty(data)) {
-            m.setData(data);
+            data = data + " android收到，并在后面添加这段文字发送回js";
+            message.setData(data);
         }
         // Message存callback
         if (responseCallback != null) {
             String callbackStr = String.format(BridgeUtil.CALLBACK_ID_FORMAT, ++uniqueId + (BridgeUtil.UNDERLINE_STR + SystemClock.currentThreadTimeMillis()));
             // 将callBack保存到本地变量 responseCallbacks 中
             responseCallbacks.put(callbackStr, responseCallback);
-            m.setCallbackId(callbackStr);
+            message.setCallbackId(callbackStr);
         }
         // Message存handlerName
         if (!TextUtils.isEmpty(handlerName)) {
-            m.setHandlerName(handlerName);
+            message.setHandlerName(handlerName);
         }
         // 查询消息
-        queueMessage(m);
+        queueMessage(message);
     }
 
     /**
@@ -159,11 +160,12 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
 
     /**
      * 分发message 必须在主线程才分发成功
+     * 通过 loadUrl 调用到 js 的_handleMessageFromNative 方法
      *
-     * @param m Message eg: "callbackId":"JAVA_CB_2_368","data":"data from android webView.callHandler()","handlerName":"functionInJs"}
+     * @param message Message eg: "callbackId":"JAVA_CB_2_368","data":"data from android webView.callHandler()","handlerName":"functionInJs"}
      */
-    void dispatchMessage(Message m) {
-        String messageJson = m.toJson();
+    void dispatchMessage(Message message) {
+        String messageJson = message.toJson();
         Log.e("chris", "messageJson==" + messageJson);
         //为json字符串转义特殊字符，格式处理
         messageJson = messageJson.replaceAll("(\\\\)([^utrn])", "\\\\\\\\$1$2");
@@ -177,7 +179,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
         // 必须要找主线程才会将数据传递出去
         // webView在主线程中加载该 url schema
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-            // 到这里安卓部分已经完成，拦截url 等待js回调，剩下的交给JsBridge处理
+            // 到这里安卓部分已经完成，拦截url 等待js回调，剩下的交给JsBridge的_handleMessageFromNative处理
             this.loadUrl(javascriptCommand);
         }
     }
