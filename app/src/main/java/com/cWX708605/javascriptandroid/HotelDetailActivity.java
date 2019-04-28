@@ -95,7 +95,8 @@ public class HotelDetailActivity extends Activity {
                     JSONObject json = new JSONObject();
                     json.put("call", "Android调用Js方法callback");
                     json.put("city", "深圳市2");
-                    mWebView.loadUrl("javascript:showMessage("+json.toString()+")");
+                    json.put("callback", "callback");
+                    mWebView.loadUrl("javascript:androidWithCallback("+json.toString()+")");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

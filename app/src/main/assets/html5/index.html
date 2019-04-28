@@ -44,7 +44,7 @@
     });
 
     $("#callAndroidWithCallback").click(function(){
-        var json = {"message":"js点击事件02-想要拿到酒店详情页数据", "callback":"receiver"};
+        var json = {"message":"js点击事件02-调用安卓方法getHotelData()", "callback":"receiver"};
         window.jsInterface.getHotelData(JSON.stringify(json));
     });
 
@@ -53,9 +53,16 @@
         alert(JSON.stringify(json));
     }
 
-    <!---->
+    <!--可以被调用的普通的alert提示-->
     function showMessage(json){
         alert(JSON.stringify(json));
+    }
+
+    <!--这个是android调用js这个方法后，回调安卓的方法-->
+    function androidWithCallback(json){
+        alert(JSON.stringify(json));
+        var json = {"message":"这个是android调用js这个方法后，回调安卓的方法"};
+        window.jsInterface.callbackToJs(JSON.stringify(json));
     }
 
 
