@@ -76,6 +76,8 @@
         /*注册messageHandler，function(message, responseCallback) {}是一个messageHandler，他里面有message和callback*/
             bridge.init(function(message, responseCallback) {
                 console.log('JS connectWebViewJavascriptBridge got a message', message);
+                document.getElementById("show").innerHTML = ("html的默认handler处理安卓发过来的消息，这个消息没有handler和callback, data="+message);
+
                 var data = {
                     'Javascript Responds': '测试中文!!!'
                 };

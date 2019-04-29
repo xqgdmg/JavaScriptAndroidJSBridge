@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jsbridge.utils.BridgeHandler;
@@ -17,9 +18,13 @@ import com.google.gson.Gson;
 
 public class MainActivity extends Activity {
 
-    BridgeWebView webView;
+    private BridgeWebView webView;
 
-    Button buttonCallHandler;
+    private Button buttonCallHandler;
+
+    private Button buttonSend;
+
+    private TextView tvShow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,16 +35,27 @@ public class MainActivity extends Activity {
 
         initWebView();
 
+//        webView.send("hello");
+
     }
 
     private void initView() {
         buttonCallHandler = (Button) findViewById(R.id.buttonCallHandler);
+        buttonSend = (Button) findViewById(R.id.buttonSend);
+        tvShow = (TextView) findViewById(R.id.tvShow);
         webView = (BridgeWebView) findViewById(R.id.webView);
 
         buttonCallHandler.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 callHandler();
+            }
+        });
+
+        buttonSend.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                send();
             }
         });
 
@@ -63,6 +79,14 @@ public class MainActivity extends Activity {
     }
 
     /*
+     * Android调用web，只传data，不传handler和callback
+     */
+    private void send() {
+
+        webView.send("这是Android调用send()传递过来的参数");
+    }
+
+    /*
      * 这个方法本质是通过 webView.loadUrl(javascriptCommand);
      * 回调是在 shouldOverrideUrlLoading 处理；
      * 处理之后会把data 传递到 CallBackFunction 的 onCallBack()
@@ -73,7 +97,8 @@ public class MainActivity extends Activity {
 
             @Override
             public void onCallBack(String data) {
-                Toast.makeText(MainActivity.this, "安卓调用了Js后，Js回调的数据== " + data, Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this, "安卓调用了Js后，Js回调的数据== " + data, Toast.LENGTH_LONG).show();
+                tvShow.setText("安卓调用了Js后，Js回调的数据==" + data);
             }
         });
     }
@@ -88,14 +113,14 @@ public class MainActivity extends Activity {
 
 
 
-    static class Location {
+    /*static class Location {
         String address;
     }
 
     static class User {
         String name;
         Location location;
-    }
+    }*/
 
 
 }

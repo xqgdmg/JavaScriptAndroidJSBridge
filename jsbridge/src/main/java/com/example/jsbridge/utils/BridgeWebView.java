@@ -24,7 +24,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     // 注入的 js 文件
     public static final String toLoadJs = "WebViewJavascriptBridge.js";
 
-    // 存 js 给安卓的 response 回调类，是CallBack回调没有关系
+    // 存 js 给安卓的 response 回调类
     Map<String, CallBackFunction> responseCallbacks = new HashMap<String, CallBackFunction>();
 
     // 保存 handler
@@ -36,6 +36,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     // js未注入的时候，安卓调用js，存Message 信息，防止数据丢失
     private List<Message> startupMessageList = new ArrayList<Message>();
 
+    // responseCallback 的 id
     private long uniqueId = 0;
 
     public BridgeWebView(Context context, AttributeSet attrs) {
@@ -82,14 +83,14 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     }
 
     /**
-     * webView 截取 url 后，处理返回数据
+     * webView 截取 url 后，处理js返回数据
      */
     void handlerReturnData(String url) {
         String functionName = BridgeUtil.getFunctionFromReturnUrl(url);
         CallBackFunction callBackFunction = responseCallbacks.get(functionName);
         String data = BridgeUtil.getDataFromReturnUrl(url);
         if (callBackFunction != null) {
-            callBackFunction.onCallBack(data);
+            callBackFunction.onCallBack(data);// 执行回调
             responseCallbacks.remove(functionName); // 移除已经处理过的回调
             return;
         }
@@ -98,10 +99,10 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     /*
      * webView 给 js 发送消息
      */
-//    @Override
-//    public void send(String data) {
-//        send(data, null);
-//    }
+    @Override
+    public void send(String data) {
+        send(data, null);
+    }
 
     /*
      * webView 给 js 发送消息，带callBack
@@ -122,7 +123,6 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
         Message message = new Message();
         // Message存data
         if (!TextUtils.isEmpty(data)) {
-            data = data + " android收到，并在后面添加这段文字发送回js";
             message.setData(data);
         }
         // Message存callback

@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <!-- button 演示Android调用web，只传data，不传handler和callback -->
+    <Button
+        android:id="@+id/buttonSend"
+        android:layout_width="match_parent"
+        android:text="Android调用Web(send)"
+        android:textAllCaps="false"
+        android:layout_height="48dp"/>
 
     <!-- button 演示Android调用web -->
     <Button
@@ -17,7 +24,19 @@
     <com.example.jsbridge.utils.BridgeWebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="0dp"
+        android:layout_weight="1">
     </com.example.jsbridge.utils.BridgeWebView>
+
+    <TextView
+        android:id="@+id/tvShow"
+        android:layout_margin="3dp"
+        android:background="#55000000"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:textColor="#19191a"
+        android:textSize="14sp"
+        android:text="" />
 
 </LinearLayout>
