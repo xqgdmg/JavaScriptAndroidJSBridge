@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void handler(String data, CallBackFunction function) {
-                function.onCallBack("android 注冊给 js 使用的方法，js传递的参数==" + data);
+                function.onCallBack("这是 registerHandler的 onCallback()，收到js传递的data=" + data);
             }
 
         });

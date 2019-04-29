@@ -56,7 +56,7 @@ public class BridgeWebViewClient extends WebViewClient {
                 webView.handlerReturnData(url);
                 return true;
             } else if (url.startsWith(BridgeUtil.YY_OVERRIDE_SCHEMA)) { // 普通 "yy://" 开头的url
-                webView.flushMessageQueue();// 刷新消息队列(存 js 给安卓的回调类)
+                webView.flushMessageQueue();// 刷新消息队列
                 return true;
             } else {
                 return this.onCustomShouldOverrideUrlLoading(url) ? true : super.shouldOverrideUrlLoading(view, request);

@@ -87,8 +87,11 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     void handlerReturnData(String url) {
         String functionName = BridgeUtil.getFunctionFromReturnUrl(url);
+        Log.e("chris","handlerReturnData functionName==" + functionName);
         CallBackFunction callBackFunction = responseCallbacks.get(functionName);
+        Log.e("chris","handlerReturnData callBackFunction==" + callBackFunction);
         String data = BridgeUtil.getDataFromReturnUrl(url);
+        Log.e("chris","handlerReturnData data==" + data);
         if (callBackFunction != null) {
             callBackFunction.onCallBack(data);// 执行回调
             responseCallbacks.remove(functionName); // 移除已经处理过的回调
@@ -189,71 +192,11 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      * 通过loadUrl调用到WebViewJavascriptBridge.js中的_fetchQueue()方法
      */
     void flushMessageQueue() {
+        MyCallBackFunction myCallBackFunction = new MyCallBackFunction();
+        // jsBridge抓取消息 _fetchQueue 即返回messageQueueString的数据 ，抓取之后回调数据到 myCallBackFunction
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
             // JS_FETCH_QUEUE_FROM_JAVA = "javascript:WebViewJavascriptBridge._fetchQueue();";
-            loadUrl(BridgeUtil.JS_FETCH_QUEUE_FROM_JAVA, new CallBackFunction() {// jsBridge抓取消息_fetchQueue
-
-                @Override
-                public void onCallBack(String data) {
-                    // deserializeMessage 反序列化消息
-                    List<Message> list = null;
-                    try {
-                        // json格式的data转为 list
-                        list = Message.toArrayList(data);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return;
-                    }
-                    if (list == null || list.size() == 0) {
-                        return;
-                    }
-                    // 处理消息
-                    for (int i = 0; i < list.size(); i++) {
-                        Message message = list.get(i);
-                        String responseId = message.getResponseId();
-
-                        if (!TextUtils.isEmpty(responseId)) {// 是response
-                            CallBackFunction function = responseCallbacks.get(responseId);
-                            String responseData = message.getResponseData();
-                            function.onCallBack(responseData);
-                            responseCallbacks.remove(responseId);
-                        } else {// 是CallBack
-                            CallBackFunction responseFunction = null;
-
-                            final String callbackId = message.getCallbackId();
-                            if (!TextUtils.isEmpty(callbackId)) {// 如果有回调Id
-                                responseFunction = new CallBackFunction() {
-                                    @Override
-                                    public void onCallBack(String data) {// 组装回调数据
-                                        Message responseMsg = new Message();
-                                        responseMsg.setResponseId(callbackId);
-                                        responseMsg.setResponseData(data);
-                                        queueMessage(responseMsg);// 再dispatchMessage(message);再 _handleMessageFromNative
-                                    }
-                                };
-                            } else {
-                                responseFunction = new CallBackFunction() {
-                                    @Override
-                                    public void onCallBack(String data) {
-                                        // 没有回调Id，do nothing
-                                    }
-                                };
-                            }
-                            // Handler 操作
-                            BridgeHandler handler;
-                            if (!TextUtils.isEmpty(message.getHandlerName())) {
-                                handler = messageHandlers.get(message.getHandlerName());
-                            } else {
-                                handler = defaultHandler;
-                            }
-                            if (handler != null) {
-                                // callBackFunction.onCallBack()
-                                handler.handler(message.getData(), responseFunction);
-                            }
-                        }
-                    }
-                }
-            });
+            loadUrl(BridgeUtil.JS_FETCH_QUEUE_FROM_JAVA, myCallBackFunction);
         }
     }
 
@@ -289,6 +232,85 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     public void callHandler(String handlerName, String data, CallBackFunction callBack) {
         doSend(handlerName, data, callBack);
     }
+
+    /*
+     * CallBackFunction 处理 js返回messageQueueString的数据
+     */
+    class MyCallBackFunction implements CallBackFunction{
+        @Override
+        public void onCallBack(String data) {
+            // deserializeMessage 反序列化消息
+            List<Message> list = null;
+            try {
+                // json格式的data转为 list
+                list = Message.toArrayList(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+            if (list == null || list.size() == 0) {
+                return;
+            }
+            // 处理消息
+            for (int i = 0; i < list.size(); i++) {
+                Message message = list.get(i);
+                String responseId = message.getResponseId();
+
+                if (!TextUtils.isEmpty(responseId)) {// 处理response
+                    CallBackFunction function = responseCallbacks.get(responseId);
+                    String responseData = message.getResponseData();
+                    function.onCallBack(responseData);
+                    responseCallbacks.remove(responseId);
+                } else {// 处理CallBack
+                    // 创建回调对象
+                    CallBackFunction callBackFunction = null;
+
+                    final String callbackId = message.getCallbackId();
+                    if (!TextUtils.isEmpty(callbackId)) {
+                        // 如果有回调Id，组装回调数据
+                        callBackFunction = new CallBackFunction() {
+                            @Override
+                            public void onCallBack(String data) {
+                                Message responseMsg = new Message();
+                                responseMsg.setResponseId(callbackId);
+                                responseMsg.setResponseData(data);
+                                queueMessage(responseMsg);// 再dispatchMessage(message);再 _handleMessageFromNative
+                            }
+                        };
+                    } else {
+                        callBackFunction = new CallBackFunction() {
+                            @Override
+                            public void onCallBack(String data) {
+                                // 没有回调Id，不回调数据
+                            }
+                        };
+                    }
+                    // 处理Handler
+                    BridgeHandler handler;
+                    if (!TextUtils.isEmpty(message.getHandlerName())) {
+                        handler = messageHandlers.get(message.getHandlerName());
+                    } else {
+                        handler = defaultHandler;
+                    }
+                    if (handler != null) {
+                        // callBackFunction.onCallBack()
+                        handler.handler(message.getData(), callBackFunction);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * unregister handler

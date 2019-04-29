@@ -10,7 +10,7 @@ public class DefaultHandler implements BridgeHandler {
     @Override
     public void handler(String data, CallBackFunction callBackFunction) {
         if (callBackFunction != null) {
-            callBackFunction.onCallBack("这是 DefaultHandler onCallback 返回的data=" + data);
+            callBackFunction.onCallBack("这是 DefaultHandler的onCallback()，收到返回的data=" + data);
         }
     }
 

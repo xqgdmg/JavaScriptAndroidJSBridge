@@ -16,11 +16,11 @@
     </xmp>
 </p>
 <p>
-    <input type="button" id="enter" value="发消息给Native" onclick="testClick();"
+    <input type="button" id="enter" value="发消息给Native（DefaultHandler）" onclick="testClick();"
     />
 </p>
 <p>
-    <input type="button" id="enter1" value="调用Native方法" onclick="testClick1();"
+    <input type="button" id="enter1" value="调用Native方法（registerHandler）" onclick="testClick1();"
     />
 </p>
 </body>
@@ -46,7 +46,7 @@
                 'submitFromWeb'
                 , {'param': 'js调用Android的方法，传递的参数'}
                 , function(responseData) {
-                    document.getElementById("show").innerHTML = "调用Native方法: Android 返回的 data=" + responseData
+                    document.getElementById("show").innerHTML = "Android返回的data=" + responseData
                 }
             );
         }
