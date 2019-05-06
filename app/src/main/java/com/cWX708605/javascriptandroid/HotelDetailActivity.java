@@ -40,7 +40,7 @@ public class HotelDetailActivity extends Activity {
         settings.setJavaScriptEnabled(true);
 
 
-        //设置浏览器
+        //设置浏览器，这个必须重写
         mWebView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onReceivedTitle(WebView view, String title) {
@@ -54,7 +54,7 @@ public class HotelDetailActivity extends Activity {
         });
 
 
-
+        // 这个非必须重写
         mWebView.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {

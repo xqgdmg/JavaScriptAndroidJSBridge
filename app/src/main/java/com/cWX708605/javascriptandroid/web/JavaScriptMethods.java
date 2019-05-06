@@ -15,17 +15,13 @@ import org.json.JSONObject;
 public class JavaScriptMethods {
     private WebView mWebView;
     private Context context;
-    private Handler mHandler = new Handler() {
-    };
+    private Handler mHandler = new Handler() {};
 
     public JavaScriptMethods(Context context, WebView webView) {
         this.context = context;
         this.mWebView = webView;
     }
 
-    public JavaScriptMethods(Context context) {
-        this.context = context;
-    }
 
     @JavascriptInterface
     public void showToast(String json) {
@@ -34,10 +30,8 @@ public class JavaScriptMethods {
 
     /**
      * 获取酒店详情数据
-     *
+     * <p>
      * 这是安卓的方法
-     *
-     *
      *
      * @param json
      */
@@ -46,16 +40,15 @@ public class JavaScriptMethods {
         try {
             Toast.makeText(context, "安卓先收到js消息:" + json, Toast.LENGTH_SHORT).show();
 
-
             JSONObject jsJsonObject = new JSONObject(json);
             final String callback = jsJsonObject.optString("callback");//js回调方法（callback）
 
-            //这里假装已经访问了网络获取数据
+            // 这里假装已经访问了网络获取数据
             final JSONObject backJson = new JSONObject();
             backJson.put("name", "安卓getHotelData()被js调用了");
             backJson.put("detail", "这是安卓返回的酒店详情数据");
 
-            //android调用js，必须在主线程
+            // android调用js，必须在主线程
             invokeJavaSctiptMethod(callback, backJson.toString());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -63,7 +56,24 @@ public class JavaScriptMethods {
     }
 
     /**
+     * 安卓调用js后，js再调用安卓使用
+     */
+    @JavascriptInterface
+    public void callbackToJs(String jsJson) {
+        try {
+            // 获取js callback方法名
+            JSONObject jsonObject = new JSONObject(jsJson);
+
+            Toast.makeText(context, "js返回的callback" + jsonObject.toString(), Toast.LENGTH_SHORT).show();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 调用js方法，统一管理
+     *
      * @param callback
      * @param backJson
      */
@@ -76,21 +86,4 @@ public class JavaScriptMethods {
         });
     }
 
-    /**
-     * 安卓调用js后，js再调用安卓使用
-     */
-    @JavascriptInterface
-    public void callbackToJs(String jsJson) {
-
-        try {
-            //获取js callback方法名
-            JSONObject jsonObject = new JSONObject(jsJson);
-
-            Toast.makeText(context,"js返回的callback"  + jsonObject.toString(),Toast.LENGTH_SHORT).show();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 }
