@@ -93,7 +93,7 @@
         }
     }
 
-    //提供给native使用  //将回调信息传给H5
+    //提供给native使用 1.处理安卓调js传回来的数据 2.将回调信息传给H5
     function _dispatchMessageFromNative(messageJSON) {
         setTimeout(function() {
             var message = JSON.parse(messageJSON);
@@ -110,8 +110,8 @@
                 //直接发送
                 if (message.callbackId) {/*处理callback*/
                     var callbackResponseId = message.callbackId;
-                    responseCallback = function(responseData) {
-                        _doSend({
+                    responseCallback = function(responseData) {/*responseCallback是一个方法*/
+                        _doSend({/*_doSend方法参数为json，通过更改iFrame触发安卓接受数据*/
                             responseId: callbackResponseId,
                             responseData: responseData
                         });
