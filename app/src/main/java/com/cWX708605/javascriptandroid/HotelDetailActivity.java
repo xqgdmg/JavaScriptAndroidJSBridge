@@ -15,7 +15,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.cWX708605.javascriptandroid.web.JavaScriptMethods;
+import com.cWX708605.javascriptandroid.bridge.JavaScriptMethods;
 
 public class HotelDetailActivity extends Activity {
 
@@ -95,6 +95,7 @@ public class HotelDetailActivity extends Activity {
                     JSONObject json = new JSONObject();
                     json.put("call", "Android调用Js方法callback");
                     json.put("city", "深圳市2");
+                    // 传递 callback
                     json.put("callback", "callback");
                     mWebView.loadUrl("javascript:androidWithCallback("+json.toString()+")");
                 } catch (JSONException e) {

@@ -1,4 +1,4 @@
-package com.cWX708605.javascriptandroid.web;
+package com.cWX708605.javascriptandroid.bridge;
 
 import android.content.Context;
 import android.os.Handler;
@@ -56,7 +56,7 @@ public class JavaScriptMethods {
     }
 
     /**
-     * 安卓调用js后，js再调用安卓使用
+     * 安卓调用js后，js再调用安卓使用（android调js后，js回调android）
      */
     @JavascriptInterface
     public void callbackToJs(String jsJson) {

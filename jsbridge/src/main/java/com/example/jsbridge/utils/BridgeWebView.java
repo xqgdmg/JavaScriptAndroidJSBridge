@@ -87,11 +87,11 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     void handlerReturnData(String url) {
         String functionName = BridgeUtil.getFunctionFromReturnUrl(url);
-        Log.e("chris","handlerReturnData functionName==" + functionName);
+//        Log.e("chris","handlerReturnData functionName==" + functionName);
         CallBackFunction callBackFunction = responseCallbacks.get(functionName);
-        Log.e("chris","handlerReturnData callBackFunction==" + callBackFunction);
+//        Log.e("chris","handlerReturnData callBackFunction==" + callBackFunction);
         String data = BridgeUtil.getDataFromReturnUrl(url);
-        Log.e("chris","handlerReturnData data==" + data);
+//        Log.e("chris","handlerReturnData data==" + data);
         if (callBackFunction != null) {
             callBackFunction.onCallBack(data);// 执行回调
             responseCallbacks.remove(functionName); // 移除已经处理过的回调

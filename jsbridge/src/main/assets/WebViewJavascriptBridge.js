@@ -77,7 +77,7 @@
             message.callbackId = callbackId;
         }
 
-        // push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。
+        // 保存消息到 sendMessageQueue
         sendMessageQueue.push(message);
         messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + '://' + QUEUE_HAS_MESSAGE;
     }
