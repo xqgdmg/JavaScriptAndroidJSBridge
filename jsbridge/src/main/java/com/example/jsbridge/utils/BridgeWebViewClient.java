@@ -2,6 +2,7 @@ package com.example.jsbridge.utils;
 
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -47,6 +48,7 @@ public class BridgeWebViewClient extends WebViewClient {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             String url = request.getUrl().toString();
+            Log.e("chris","url==" + url);
             try {
                 url = URLDecoder.decode(url, "UTF-8");
             } catch (UnsupportedEncodingException ex) {
