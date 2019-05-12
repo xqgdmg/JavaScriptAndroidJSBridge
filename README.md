@@ -381,4 +381,4 @@ eg：javascript:WebViewJavascriptBridge._handleMessageFromNative('{\"callbackId\
 	    }, responseCallback);
 	}
 
-后面是和1一样的流程，回到a的第二个步骤。
+后面是和a一样的流程，回到a的第二个步骤。
