@@ -232,10 +232,10 @@ eg：javascript:WebViewJavascriptBridge._handleMessageFromNative('{\"callbackId\
 <br/>
 
 
-# JS 调用 Android 的方法：
-<br/>
+# JS 调用 Android 的方法：<br/>
+
 ![](https://i.imgur.com/eAKHIiX.png)
-<br/>
+
 ## 实现原理：利用js的iFrame（不显示）的src（url）动态变化，触发java层WebViewClient的shouldOverrideUrlLoading方法，然后让本地去调用js。js代码执行完成后，最终调用_doSend方法处理回调。<br/>
 
 ## a：没有传 handlerName 的方式：使用 defaultHandler 处理，不用注册 Handler。
