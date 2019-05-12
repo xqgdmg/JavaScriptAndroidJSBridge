@@ -1,9 +1,10 @@
 # Android 调用 JS 的方法：<br/>
 
-![](https://i.imgur.com/vftWygC.png)
+
+![](https://i.imgur.com/MfwfN4L.png)
 
 
-## 实现原理：Android使用 loadUrl方法，调用js的方法，js通过注册的Handler给Android回调。
+## 实现原理：Android使用loadUrl方法，向js传递数据。js通过Iframe给Android回调。
 
 * 1.html调用js的registerHandler方法  ：
 
