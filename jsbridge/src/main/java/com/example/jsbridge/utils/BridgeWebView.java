@@ -86,17 +86,9 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      * webView 截取 url 后，处理js返回数据
      */
     void handlerReturnData(String url) {
-         // _fetchQueue
         String functionName = BridgeUtil.getFunctionFromReturnUrl(url);
-//        Log.e("chris","handlerReturnData functionName==" + functionName);
-
-         // com.example.jsbridge.utils.BridgeWebView$MyCallBackFunction@44976ef
         CallBackFunction callBackFunction = responseCallbacks.get(functionName);
-//        Log.e("chris","handlerReturnData callBackFunction==" + callBackFunction);
-
-         // [{"handlerName":"submitFromWeb","data":{"param":"js调用Android的方法，传递的参数"},"callbackId":"cb_1_1557674505791"}]
         String data = BridgeUtil.getDataFromReturnUrl(url);
-//        Log.e("chris","handlerReturnData data==" + data);
 
          // 这里主要处理android回调数据给js，如果js调android有传递 handlername 的话会执行
         if (callBackFunction != null) {

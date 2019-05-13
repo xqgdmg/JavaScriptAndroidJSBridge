@@ -235,7 +235,7 @@ eg：javascript:WebViewJavascriptBridge._handleMessageFromNative('{\"callbackId\
 
 # JS 调用 Android 的方法：<br/>
 
-![](https://i.imgur.com/eAKHIiX.png)
+![](https://i.imgur.com/oaD6VP1.png)
 
 ## 实现原理：利用js的iFrame（不显示）的src（url）动态变化，触发java层WebViewClient的shouldOverrideUrlLoading方法，然后让本地去调用js。js代码执行完成后，最终调用_doSend方法处理回调。<br/>
 
@@ -330,6 +330,102 @@ eg：javascript:WebViewJavascriptBridge._handleMessageFromNative('{\"callbackId\
 		    }
 		}
 
+* 7.handlerReturnData，处理数据。调用callBackFunction.onCallBack()。
+
+	    void handlerReturnData(String url) {
+	        String functionName = BridgeUtil.getFunctionFromReturnUrl(url);
+	        CallBackFunction callBackFunction = responseCallbacks.get(functionName);
+	        String data = BridgeUtil.getDataFromReturnUrl(url);
+	
+	         // 这里主要处理android回调数据给js，如果js调android有传递 handlername 的话会执行
+	        if (callBackFunction != null) {
+	            callBackFunction.onCallBack(data);// 调用 MyCallBackFunction 的 onCallBack
+	            responseCallbacks.remove(functionName); // 移除已经处理过的回调
+	            return;
+	        }
+	    }
+
+* 8.handler.handler()，registerHandler的 onCallback()，收到js传递的data。再通过new CallBackFunction() 组装回调数据。这是回调数据的开始，registerHandler的 onCallback()传递了android回到给js的data。
+
+		class MyCallBackFunction implements CallBackFunction{
+			@Override
+			public void onCallBack(String data) {
+				// deserializeMessage 反序列化消息
+				List<Message> list = null;
+				try {
+					// json格式的data转为 list
+					list = Message.toArrayList(data);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return;
+				}
+				if (list == null || list.size() == 0) {
+					return;
+				}
+				// 处理消息
+				for (int i = 0; i < list.size(); i++) {
+					Message message = list.get(i);
+					String responseId = message.getResponseId();
+
+					if (!TextUtils.isEmpty(responseId)) {// 处理response
+						CallBackFunction function = responseCallbacks.get(responseId);
+						String responseData = message.getResponseData();
+						function.onCallBack(responseData);
+						responseCallbacks.remove(responseId);
+					} else {// 处理CallBack
+						// 创建回调对象
+						CallBackFunction callBackFunction = null;
+
+						final String callbackId = message.getCallbackId();
+						if (!TextUtils.isEmpty(callbackId)) {
+							// 如果有回调Id，组装回调数据
+							callBackFunction = new CallBackFunction() {
+								@Override
+								public void onCallBack(String data) {
+									Message responseMsg = new Message();
+									responseMsg.setResponseId(callbackId);
+									responseMsg.setResponseData(data);
+									queueMessage(responseMsg);// 再dispatchMessage(message);再 _handleMessageFromNative
+								}
+							};
+						} else {
+							callBackFunction = new CallBackFunction() {
+								@Override
+								public void onCallBack(String data) {
+									// 没有回调Id，不回调数据
+								}
+							};
+						}
+						// 处理Handler
+						BridgeHandler handler;
+						if (!TextUtils.isEmpty(message.getHandlerName())) {
+							handler = messageHandlers.get(message.getHandlerName());
+						} else {
+							handler = defaultHandler;
+						}
+						if (handler != null) {
+							// c执行完注册的handler之后，执行callBackFunction里面的onCallBack方法
+							handler.handler(message.getData(), callBackFunction);
+						}
+					}
+				}
+			}
+		}
+
+* 9.Android通过queueMessage()，dispatchMessage()，loadUrl()写入回调数据。再经过js的_handleMessageFromNative()，_dispatchMessageFromNative()，Js收到android回调的数据。
+
+	    void handlerReturnData(String url) {
+	        String functionName = BridgeUtil.getFunctionFromReturnUrl(url);
+	        CallBackFunction callBackFunction = responseCallbacks.get(functionName);
+	        String data = BridgeUtil.getDataFromReturnUrl(url);
+	
+	         // 这里主要处理android回调数据给js，如果js调android有传递 handlername 的话会执行
+	        if (callBackFunction != null) {
+	            callBackFunction.onCallBack(data);// 调用 MyCallBackFunction 的 onCallBack
+	            responseCallbacks.remove(functionName); // 移除已经处理过的回调
+	            return;
+	        }
+	    }
 
 --------------------------
 
