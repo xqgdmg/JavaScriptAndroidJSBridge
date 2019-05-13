@@ -240,6 +240,26 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
         doSend(handlerName, data, callBack);
     }
 
+    /**
+     * unregister handler
+     *
+     * @param handlerName
+     */
+    public void unregisterHandler(String handlerName) {
+        if (handlerName != null) {
+            messageHandlers.remove(handlerName);
+        }
+    }
+
+    public List<Message> getStartupMessageList() {
+        return startupMessageList;
+    }
+
+    public void setStartupMessageList(List<Message> startupMessageList) {
+        this.startupMessageList = startupMessageList;
+    }
+
+
     /*
      * CallBackFunction 处理 js返回messageQueueString的数据
      */
@@ -306,36 +326,6 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
                 }
             }
         }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * unregister handler
-     *
-     * @param handlerName
-     */
-    public void unregisterHandler(String handlerName) {
-        if (handlerName != null) {
-            messageHandlers.remove(handlerName);
-        }
-    }
-
-    public List<Message> getStartupMessageList() {
-        return startupMessageList;
-    }
-
-    public void setStartupMessageList(List<Message> startupMessageList) {
-        this.startupMessageList = startupMessageList;
     }
 
 }
