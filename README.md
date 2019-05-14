@@ -3,7 +3,7 @@
 
 ![](https://i.imgur.com/MfwfN4L.png)
 
-## 使用方法
+## 使用方法：
 * 1.html调用js的registerHandler方法  ：
 
 		//html调用registerHandler()
@@ -256,7 +256,7 @@ eg：javascript:WebViewJavascriptBridge._handleMessageFromNative('{\"callbackId\
 
 ![](https://i.imgur.com/oaD6VP1.png)
 
-## 使用方法
+## 使用方法：
 * 1.android使用第三方库控件
 
         <com.example.jsbridge.utils.BridgeWebView
