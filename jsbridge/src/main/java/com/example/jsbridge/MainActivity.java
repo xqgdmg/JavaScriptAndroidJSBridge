@@ -32,10 +32,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         initView();
-
         initWebView();
-
-//        webView.send("hello");
 
     }
 
@@ -102,25 +99,5 @@ public class MainActivity extends Activity {
             }
         });
     }
-
-
-
-
-
-
-
-
-
-
-
-    /*static class Location {
-        String address;
-    }
-
-    static class User {
-        String name;
-        Location location;
-    }*/
-
 
 }

@@ -3,6 +3,25 @@
 
 ![](https://i.imgur.com/MfwfN4L.png)
 
+## 使用方法
+* 1.html调用js的registerHandler方法  ：
+
+		//html调用registerHandler()
+		WebViewJavascriptBridge.registerHandler("functionInJs", function(data, responseCallback) {
+		    document.getElementById("show").innerHTML = ("data from Java: = " + data);
+		    var responseData = "Javascript Write back something!";
+		    responseCallback(responseData);
+		});
+
+* 2.Android调用callHandler()
+
+		//Java调用注册的方法functionInJs【Java代码】
+		webView.callHandler("functionInJs", new Gson().toJson(user), new CallBackFunction() {
+	        @Override
+	        public void onCallBack(String data) {
+
+	        }
+		});
 
 ## 实现原理：Android使用loadUrl方法，向js传递数据。js通过Iframe给Android回调。
 
@@ -236,6 +255,44 @@ eg：javascript:WebViewJavascriptBridge._handleMessageFromNative('{\"callbackId\
 # JS 调用 Android 的方法：<br/>
 
 ![](https://i.imgur.com/oaD6VP1.png)
+
+## 使用方法
+* 1.android使用第三方库控件
+
+        <com.example.jsbridge.utils.BridgeWebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        </com.example.jsbridge.utils.BridgeWebView>
+
+* 2.android调用第三方库控件的 registerHandler方法
+        webView.registerHandler("submitFromWeb", new BridgeHandler() {
+
+            @Override
+            public void handler(String data, CallBackFunction function) {
+                Log.i(TAG, "handler = submitFromWeb, data from web = " + data);
+                        function.onCallBack("submitFromWeb exe, response data 中文 from Java");
+            }
+
+        });
+
+* 3.html中调用Native端提供的方法
+
+		//demo.html
+		function testClick1() {
+		    var str1 = document.getElementById("text1").value;
+		    var str2 = document.getElementById("text2").value;
+
+		    //call native method
+		    window.WebViewJavascriptBridge.callHandler(
+		        'submitFromWeb'
+		         , {'param': '中文测试'}
+		         , function(responseData) { // 这个参数是responseCallback
+		                    document.getElementById("show").innerHTML = "js send get responseData from java, data = " + responseData
+		        }
+		    );
+		}
 
 ## 实现原理：利用js的iFrame（不显示）的src（url）动态变化，触发java层WebViewClient的shouldOverrideUrlLoading方法，然后让本地去调用js。js代码执行完成后，最终调用_doSend方法处理回调。<br/>
 
