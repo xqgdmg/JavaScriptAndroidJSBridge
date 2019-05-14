@@ -4,7 +4,7 @@
 
 ![](https://i.imgur.com/MfwfN4L.png)
 
-## 使用方法：
+## 使用方法：（需要自己写一个html，使用第三方库的WebViewJavascriptBridge.js）
 * 1.html调用js的registerHandler方法  ：
 
 		//html调用registerHandler()
